@@ -35,8 +35,11 @@ func main() {
 	visitor := visitor.NewCalcVisitor()
 	tree.Accept(visitor)
 
-	fmt.Println(visitor.Res)
+	// fmt.Println(visitor.Res)
+	fmt.Println("Builder ---->")
 
-	os.WriteFile("out.txt", []byte(fmt.Sprintf("%v", visitor.Res)), 0777)
+	fmt.Println(visitor.StringBuilder.String())
+
+	os.WriteFile("out.txt", []byte(fmt.Sprintf("%v", visitor.StringBuilder.String())), 0777)
 
 }

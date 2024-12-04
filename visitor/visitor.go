@@ -2,57 +2,59 @@ package visitor
 
 import (
 	"antlr4/lab/parser"
+	"antlr4/lab/util"
 	"fmt"
-	"strconv"
+	"strings"
 )
 
 type CalcVisitor struct {
 	*parser.BaseCalcVisitor
-	Variables map[string]float64
-	Res       float64
+	Variables     map[string]string
+	StringBuilder strings.Builder
 }
 
 func NewCalcVisitor() *CalcVisitor {
-	return &CalcVisitor{Variables: make(map[string]float64)}
+	return &CalcVisitor{Variables: make(map[string]string)}
 }
 
 func (v *CalcVisitor) VisitProgram(ctx *parser.ProgramContext) interface{} {
-	fmt.Println(ctx.GetChildCount())
-	fmt.Println(ctx.GetText())
+
 	for i := 0; i < ctx.GetChildCount(); i++ {
 		if state := ctx.Statement(i); state != nil {
 			state.Accept(v)
 		}
 	}
 
+	v.StringBuilder.WriteString("ebreak")
+
 	return 0
 }
 
 func (v *CalcVisitor) VisitStatement(ctx *parser.StatementContext) any {
-	fmt.Println("Statemant scope")
-
-	fmt.Println(ctx.GetText())
-
 	if ctx.Assigment() != nil {
-		fmt.Println("if scope for assigment")
 
 		return ctx.Assigment().Accept(v)
 	}
-	fmt.Println("if scope for expression")
 
-	v.Res = ctx.Expression().Accept(v).(float64)
+	fmt.Println("Expression Statment 0 in")
+
+	ctx.Expression().Accept(v)
+	fmt.Println("Expression Statment 0 out")
 
 	return 0
 }
 
 func (v *CalcVisitor) VisitAssigment(ctx *parser.AssigmentContext) any {
-	fmt.Println("assigment scope")
 
 	id := ctx.ID().GetText()
-	value := ctx.Expression().Accept(v).(float64)
+	value := ctx.Expression().Accept(v).(string)
 	v.Variables[id] = value
 
 	fmt.Printf("write to mem with id = %v and val = %v \n", id, value)
+
+	riscString := util.AssigmentRiscFuncInit(id, value)
+
+	v.StringBuilder.WriteString(riscString)
 
 	return value
 
@@ -81,38 +83,56 @@ func (v *CalcVisitor) VisitMulDiv(ctx *parser.MulDivContext) interface{} {
 
 }
 
-func (v *CalcVisitor) VisitAddSub(ctx *parser.AddSubContext) interface{} {
-	left := ctx.Expression(0).Accept(v).(float64)
-	right := ctx.Expression(1).Accept(v).(float64)
+func (v *CalcVisitor) VisitAddSub(ctx *parser.AddSubContext) any {
+	left := ""
+	right := ""
+
+	l := ctx.Expression(0).Accept(v)
+	left = fmt.Sprintf("%v", l)
+
+	r := ctx.Expression(1).Accept(v)
+	right = fmt.Sprintf("%v", r)
 
 	switch ctx.GetOp().GetTokenType() {
 
 	case parser.CalcLexerADD:
-		fmt.Printf("Add with l = %v and r = %v\n", left, right)
 
-		return left + right
+		resId := util.MakeVarForResRisc()
+
+		riscString := util.AddIdRiscFunc(resId, left, right)
+		v.StringBuilder.WriteString(riscString)
+
+		return resId
 
 	case parser.CalcLexerSUB:
-		fmt.Printf("Sub` with l = %v and r = %v\n", left, right)
 
-		return left - right
+		resId := util.MakeVarForResRisc()
+
+		riscString := util.SubIdRicsFunc(resId, left, right)
+		v.StringBuilder.WriteString(riscString)
+
+		return resId
 	}
 
 	return 0
 
 }
 
-func (v *CalcVisitor) VisitNumber(ctx *parser.NumberContext) interface{} {
-	val, _ := strconv.ParseFloat(ctx.GetText(), 64)
+func (v *CalcVisitor) VisitNumber(ctx *parser.NumberContext) any {
 
-	return val
+	id := util.MakeNumberVar(ctx.GetText())
+	riscString := util.AssigmentRiscFunc(id, ctx.GetText())
+	v.StringBuilder.WriteString(riscString)
+
+	return id
 }
 
 func (v *CalcVisitor) VisitID(ctx *parser.IDContext) any {
+	fmt.Println("IdFunc")
 	id := ctx.GetText()
 
-	if value, exists := v.Variables[id]; exists {
-		return value
+	if _, exists := v.Variables[id]; exists {
+		return id
 	}
 
 	panic("no such var in memory!")
