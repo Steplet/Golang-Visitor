@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-// Rework repeated assigment
 //TODO logical op and var; If else; while; comments; println;
 
 var addresCounter int = 0
@@ -33,8 +32,7 @@ func (v *CalcVisitor) VisitProgram(ctx *parser.ProgramContext) interface{} {
 		}
 	}
 
-	// fmt.Printf("adrre counter = %d\n", addresCounter)
-
+	v.StringBuilder.WriteString(localBuilder.String())
 	v.StringBuilder.WriteString("ebreak")
 
 	return 0
@@ -50,27 +48,94 @@ func (v *CalcVisitor) VisitStatement(ctx *parser.StatementContext) any {
 		return ctx.IfStatement().Accept(v)
 	}
 
+	if ctx.WhileStatement() != nil {
+		return ctx.WhileStatement().Accept(v)
+	}
+	if ctx.Println() != nil {
+		return ctx.Println().Accept(v)
+	}
+
 	// ctx.Expression().Accept(v)
 
 	return 0
 }
-func (v *CalcVisitor) VisitIfStatement(ctx *parser.IfStatementContext) any {
-	// var localBuilder strings.Builder
 
+func (v *CalcVisitor) VisitPrintln(ctx *parser.PrintlnContext) any {
+
+	id := ctx.Expression().Accept(v).(string)
+
+	addresCounter++
+
+	riscString := util.PrintRiscFunc(id)
+
+	localBuilder.WriteString(riscString)
+
+	return 0
+}
+
+func (v *CalcVisitor) VisitWhileStatement(ctx *parser.WhileStatementContext) any {
 	v.StringBuilder.WriteString(localBuilder.String())
 	localBuilder.Reset()
 
-	beqStringWithOutOffset := ctx.IfExpression().Accept(v).(string)
-	ifAdderStart := addresCounter
-	v.StringBuilder.WriteString(beqStringWithOutOffset)
+	jumpStringWithOutOffset := ctx.IfExpression().Accept(v).(string)
+	whileAdderStart := addresCounter
+
+	v.StringBuilder.WriteString(jumpStringWithOutOffset)
 
 	ctx.BlockStatement().Accept(v)
 
-	offset := fmt.Sprintf("%d\n", addresCounter-ifAdderStart)
+	offset := fmt.Sprintf("%d\n", addresCounter-whileAdderStart+1)
 	v.StringBuilder.WriteString(offset)
 
 	v.StringBuilder.WriteString(localBuilder.String())
 	localBuilder.Reset()
+
+	resId := util.MakeVarForResRisc()
+	riscStringWithOutOffset := util.JalRiscFunc(resId)
+	v.StringBuilder.WriteString(riscStringWithOutOffset)
+	offset = fmt.Sprintf("%d\n", whileAdderStart-addresCounter-2)
+	v.StringBuilder.WriteString(offset)
+
+	return 0
+}
+
+func (v *CalcVisitor) VisitIfStatement(ctx *parser.IfStatementContext) any {
+
+	v.StringBuilder.WriteString(localBuilder.String())
+	localBuilder.Reset()
+
+	jumpStringWithOutOffset := ctx.IfExpression().Accept(v).(string)
+	ifAdderStart := addresCounter
+	v.StringBuilder.WriteString(jumpStringWithOutOffset)
+
+	ctx.BlockStatement().Accept(v)
+
+	offset := fmt.Sprintf("%d\n", addresCounter-ifAdderStart+1)
+	v.StringBuilder.WriteString(offset)
+
+	v.StringBuilder.WriteString(localBuilder.String())
+	localBuilder.Reset()
+
+	if ctx.ElseStatement() != nil {
+		elseAdderStart := addresCounter
+
+		ctx.ElseStatement().Accept(v)
+		resId := util.MakeVarForResRisc()
+		riscStringWithOutOffset := util.JalRiscFunc(resId)
+
+		v.StringBuilder.WriteString(riscStringWithOutOffset)
+		offset = fmt.Sprintf("%d\n", addresCounter-elseAdderStart)
+		v.StringBuilder.WriteString(offset)
+		v.StringBuilder.WriteString(localBuilder.String())
+		localBuilder.Reset()
+	}
+
+	return 0
+}
+
+func (v *CalcVisitor) VisitElseStatement(ctx *parser.ElseStatementContext) any {
+
+	ctx.BlockStatement().Accept(v)
 
 	return 0
 }
@@ -200,6 +265,41 @@ func (v *CalcVisitor) VisitMulDiv(ctx *parser.MulDivContext) interface{} {
 
 }
 
+func (v *CalcVisitor) VisitLogicOp(ctx *parser.LogicOpContext) any {
+	addresCounter++
+	left := ""
+	right := ""
+
+	l := ctx.Expression(0).Accept(v)
+	left = fmt.Sprintf("%v", l)
+
+	r := ctx.Expression(1).Accept(v)
+	right = fmt.Sprintf("%v", r)
+
+	switch ctx.GetOp().GetTokenType() {
+
+	case parser.CalcLexerLOGICAL_OR:
+
+		resId := util.MakeVarForResRisc()
+
+		riscString := util.OrIdRiscFunc(resId, left, right)
+		localBuilder.WriteString(riscString)
+
+		return resId
+
+	case parser.CalcLexerLOGICAL_AND:
+
+		resId := util.MakeVarForResRisc()
+
+		riscString := util.AndIdRiscFunc(resId, left, right)
+		localBuilder.WriteString(riscString)
+
+		return resId
+	}
+
+	return 0
+}
+
 func (v *CalcVisitor) VisitAddSub(ctx *parser.AddSubContext) any {
 	addresCounter++
 
@@ -235,6 +335,24 @@ func (v *CalcVisitor) VisitAddSub(ctx *parser.AddSubContext) any {
 
 	return 0
 
+}
+
+func (v *CalcVisitor) VisitBool(ctx *parser.BoolContext) any {
+	addresCounter++
+	var riscString string
+	var id string
+	boolValueName := ctx.GetText()
+	if boolValueName == "True" {
+		id = util.MakeNumberVar("1")
+
+		riscString = util.AssigmentRiscFunc(id, "1")
+	} else {
+		id = util.MakeNumberVar("0")
+		riscString = util.AssigmentRiscFunc(id, "0")
+	}
+	localBuilder.WriteString(riscString)
+
+	return id
 }
 
 func (v *CalcVisitor) VisitNumber(ctx *parser.NumberContext) any {

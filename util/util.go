@@ -83,17 +83,24 @@ func IfBasicExpressionNotEqual(leftId, rightId string) string {
 
 }
 
+func PrintRiscFunc(id string) string {
+	varNameId := MakeRISCVar(id)
+	res := fmt.Sprintf("ewrite %s\n", varNameId)
+	return res
+}
+
+func JalRiscFunc(resId string) string {
+	varNameRes := MakeRISCVar(resId)
+
+	res := fmt.Sprintf("jal %s, ", varNameRes)
+
+	return res
+}
+
 func AssigmentRiscFuncInit(id, numberId string) string {
 	varNameNumberId := MakeRISCVar(numberId)
 	varNameResultId := MakeRISCVar(id)
 
-	// if val, ok := memoryId[id]; ok && val != numberId {
-	// 	fmt.Printf("id = %s number = %s\n", id, numberId)
-	// 	varResultId := MakeVarForResRisc()
-	// 	varResultId = MakeRISCVar(varResultId)
-	// 	res := fmt.Sprintf("add %s, %s, %s\n", varResultId, varNameResultId, varNameNumberId)
-	// 	return res
-	// }
 	res := fmt.Sprintf("add %s, %s, %s\n", varNameResultId, varZeroName, varNameNumberId) // !
 
 	return res
@@ -118,6 +125,28 @@ func SubIdRicsFunc(result, leftId, rightId string) string {
 	varNameRes := MakeRISCVar(result)
 
 	res := fmt.Sprintf("sub %s, %s, %s\n", varNameRes, varNameLeft, varNameRight)
+
+	return res
+}
+
+func OrIdRiscFunc(result, leftId, rightId string) string {
+	varNameLeft := MakeRISCVar(leftId)
+	varNameRight := MakeRISCVar(rightId)
+
+	varNameRes := MakeRISCVar(result)
+
+	res := fmt.Sprintf("or %s, %s, %s\n", varNameRes, varNameLeft, varNameRight)
+
+	return res
+}
+
+func AndIdRiscFunc(result, leftId, rightId string) string {
+	varNameLeft := MakeRISCVar(leftId)
+	varNameRight := MakeRISCVar(rightId)
+
+	varNameRes := MakeRISCVar(result)
+
+	res := fmt.Sprintf("and %s, %s, %s\n", varNameRes, varNameLeft, varNameRight)
 
 	return res
 }

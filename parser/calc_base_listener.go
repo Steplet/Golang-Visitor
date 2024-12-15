@@ -33,6 +33,18 @@ func (s *BaseCalcListener) EnterStatement(ctx *StatementContext) {}
 // ExitStatement is called when production statement is exited.
 func (s *BaseCalcListener) ExitStatement(ctx *StatementContext) {}
 
+// EnterPrintln is called when production println is entered.
+func (s *BaseCalcListener) EnterPrintln(ctx *PrintlnContext) {}
+
+// ExitPrintln is called when production println is exited.
+func (s *BaseCalcListener) ExitPrintln(ctx *PrintlnContext) {}
+
+// EnterWhileStatement is called when production whileStatement is entered.
+func (s *BaseCalcListener) EnterWhileStatement(ctx *WhileStatementContext) {}
+
+// ExitWhileStatement is called when production whileStatement is exited.
+func (s *BaseCalcListener) ExitWhileStatement(ctx *WhileStatementContext) {}
+
 // EnterIfStatement is called when production ifStatement is entered.
 func (s *BaseCalcListener) EnterIfStatement(ctx *IfStatementContext) {}
 
@@ -51,6 +63,12 @@ func (s *BaseCalcListener) EnterBlockStatement(ctx *BlockStatementContext) {}
 // ExitBlockStatement is called when production blockStatement is exited.
 func (s *BaseCalcListener) ExitBlockStatement(ctx *BlockStatementContext) {}
 
+// EnterElseStatement is called when production elseStatement is entered.
+func (s *BaseCalcListener) EnterElseStatement(ctx *ElseStatementContext) {}
+
+// ExitElseStatement is called when production elseStatement is exited.
+func (s *BaseCalcListener) ExitElseStatement(ctx *ElseStatementContext) {}
+
 // EnterAssigment is called when production assigment is entered.
 func (s *BaseCalcListener) EnterAssigment(ctx *AssigmentContext) {}
 
@@ -62,6 +80,12 @@ func (s *BaseCalcListener) EnterNumber(ctx *NumberContext) {}
 
 // ExitNumber is called when production Number is exited.
 func (s *BaseCalcListener) ExitNumber(ctx *NumberContext) {}
+
+// EnterBool is called when production Bool is entered.
+func (s *BaseCalcListener) EnterBool(ctx *BoolContext) {}
+
+// ExitBool is called when production Bool is exited.
+func (s *BaseCalcListener) ExitBool(ctx *BoolContext) {}
 
 // EnterMulDiv is called when production MulDiv is entered.
 func (s *BaseCalcListener) EnterMulDiv(ctx *MulDivContext) {}
@@ -80,3 +104,9 @@ func (s *BaseCalcListener) EnterID(ctx *IDContext) {}
 
 // ExitID is called when production ID is exited.
 func (s *BaseCalcListener) ExitID(ctx *IDContext) {}
+
+// EnterLogicOp is called when production LogicOp is entered.
+func (s *BaseCalcListener) EnterLogicOp(ctx *LogicOpContext) {}
+
+// ExitLogicOp is called when production LogicOp is exited.
+func (s *BaseCalcListener) ExitLogicOp(ctx *LogicOpContext) {}

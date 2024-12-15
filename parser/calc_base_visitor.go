@@ -16,6 +16,14 @@ func (v *BaseCalcVisitor) VisitStatement(ctx *StatementContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseCalcVisitor) VisitPrintln(ctx *PrintlnContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseCalcVisitor) VisitWhileStatement(ctx *WhileStatementContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseCalcVisitor) VisitIfStatement(ctx *IfStatementContext) interface{} {
 	return v.VisitChildren(ctx)
 }
@@ -28,11 +36,19 @@ func (v *BaseCalcVisitor) VisitBlockStatement(ctx *BlockStatementContext) interf
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseCalcVisitor) VisitElseStatement(ctx *ElseStatementContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseCalcVisitor) VisitAssigment(ctx *AssigmentContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
 func (v *BaseCalcVisitor) VisitNumber(ctx *NumberContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseCalcVisitor) VisitBool(ctx *BoolContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
@@ -45,5 +61,9 @@ func (v *BaseCalcVisitor) VisitAddSub(ctx *AddSubContext) interface{} {
 }
 
 func (v *BaseCalcVisitor) VisitID(ctx *IDContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseCalcVisitor) VisitLogicOp(ctx *LogicOpContext) interface{} {
 	return v.VisitChildren(ctx)
 }

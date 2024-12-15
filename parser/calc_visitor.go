@@ -14,6 +14,12 @@ type CalcVisitor interface {
 	// Visit a parse tree produced by CalcParser#statement.
 	VisitStatement(ctx *StatementContext) interface{}
 
+	// Visit a parse tree produced by CalcParser#println.
+	VisitPrintln(ctx *PrintlnContext) interface{}
+
+	// Visit a parse tree produced by CalcParser#whileStatement.
+	VisitWhileStatement(ctx *WhileStatementContext) interface{}
+
 	// Visit a parse tree produced by CalcParser#ifStatement.
 	VisitIfStatement(ctx *IfStatementContext) interface{}
 
@@ -23,11 +29,17 @@ type CalcVisitor interface {
 	// Visit a parse tree produced by CalcParser#blockStatement.
 	VisitBlockStatement(ctx *BlockStatementContext) interface{}
 
+	// Visit a parse tree produced by CalcParser#elseStatement.
+	VisitElseStatement(ctx *ElseStatementContext) interface{}
+
 	// Visit a parse tree produced by CalcParser#assigment.
 	VisitAssigment(ctx *AssigmentContext) interface{}
 
 	// Visit a parse tree produced by CalcParser#Number.
 	VisitNumber(ctx *NumberContext) interface{}
+
+	// Visit a parse tree produced by CalcParser#Bool.
+	VisitBool(ctx *BoolContext) interface{}
 
 	// Visit a parse tree produced by CalcParser#MulDiv.
 	VisitMulDiv(ctx *MulDivContext) interface{}
@@ -37,4 +49,7 @@ type CalcVisitor interface {
 
 	// Visit a parse tree produced by CalcParser#ID.
 	VisitID(ctx *IDContext) interface{}
+
+	// Visit a parse tree produced by CalcParser#LogicOp.
+	VisitLogicOp(ctx *LogicOpContext) interface{}
 }

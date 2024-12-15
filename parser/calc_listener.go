@@ -14,6 +14,12 @@ type CalcListener interface {
 	// EnterStatement is called when entering the statement production.
 	EnterStatement(c *StatementContext)
 
+	// EnterPrintln is called when entering the println production.
+	EnterPrintln(c *PrintlnContext)
+
+	// EnterWhileStatement is called when entering the whileStatement production.
+	EnterWhileStatement(c *WhileStatementContext)
+
 	// EnterIfStatement is called when entering the ifStatement production.
 	EnterIfStatement(c *IfStatementContext)
 
@@ -23,11 +29,17 @@ type CalcListener interface {
 	// EnterBlockStatement is called when entering the blockStatement production.
 	EnterBlockStatement(c *BlockStatementContext)
 
+	// EnterElseStatement is called when entering the elseStatement production.
+	EnterElseStatement(c *ElseStatementContext)
+
 	// EnterAssigment is called when entering the assigment production.
 	EnterAssigment(c *AssigmentContext)
 
 	// EnterNumber is called when entering the Number production.
 	EnterNumber(c *NumberContext)
+
+	// EnterBool is called when entering the Bool production.
+	EnterBool(c *BoolContext)
 
 	// EnterMulDiv is called when entering the MulDiv production.
 	EnterMulDiv(c *MulDivContext)
@@ -38,11 +50,20 @@ type CalcListener interface {
 	// EnterID is called when entering the ID production.
 	EnterID(c *IDContext)
 
+	// EnterLogicOp is called when entering the LogicOp production.
+	EnterLogicOp(c *LogicOpContext)
+
 	// ExitProgram is called when exiting the program production.
 	ExitProgram(c *ProgramContext)
 
 	// ExitStatement is called when exiting the statement production.
 	ExitStatement(c *StatementContext)
+
+	// ExitPrintln is called when exiting the println production.
+	ExitPrintln(c *PrintlnContext)
+
+	// ExitWhileStatement is called when exiting the whileStatement production.
+	ExitWhileStatement(c *WhileStatementContext)
 
 	// ExitIfStatement is called when exiting the ifStatement production.
 	ExitIfStatement(c *IfStatementContext)
@@ -53,11 +74,17 @@ type CalcListener interface {
 	// ExitBlockStatement is called when exiting the blockStatement production.
 	ExitBlockStatement(c *BlockStatementContext)
 
+	// ExitElseStatement is called when exiting the elseStatement production.
+	ExitElseStatement(c *ElseStatementContext)
+
 	// ExitAssigment is called when exiting the assigment production.
 	ExitAssigment(c *AssigmentContext)
 
 	// ExitNumber is called when exiting the Number production.
 	ExitNumber(c *NumberContext)
+
+	// ExitBool is called when exiting the Bool production.
+	ExitBool(c *BoolContext)
 
 	// ExitMulDiv is called when exiting the MulDiv production.
 	ExitMulDiv(c *MulDivContext)
@@ -67,4 +94,7 @@ type CalcListener interface {
 
 	// ExitID is called when exiting the ID production.
 	ExitID(c *IDContext)
+
+	// ExitLogicOp is called when exiting the LogicOp production.
+	ExitLogicOp(c *LogicOpContext)
 }
