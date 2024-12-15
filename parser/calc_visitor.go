@@ -14,6 +14,15 @@ type CalcVisitor interface {
 	// Visit a parse tree produced by CalcParser#statement.
 	VisitStatement(ctx *StatementContext) interface{}
 
+	// Visit a parse tree produced by CalcParser#ifStatement.
+	VisitIfStatement(ctx *IfStatementContext) interface{}
+
+	// Visit a parse tree produced by CalcParser#BasicExp.
+	VisitBasicExp(ctx *BasicExpContext) interface{}
+
+	// Visit a parse tree produced by CalcParser#blockStatement.
+	VisitBlockStatement(ctx *BlockStatementContext) interface{}
+
 	// Visit a parse tree produced by CalcParser#assigment.
 	VisitAssigment(ctx *AssigmentContext) interface{}
 

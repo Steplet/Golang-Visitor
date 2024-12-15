@@ -16,6 +16,18 @@ func (v *BaseCalcVisitor) VisitStatement(ctx *StatementContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseCalcVisitor) VisitIfStatement(ctx *IfStatementContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseCalcVisitor) VisitBasicExp(ctx *BasicExpContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseCalcVisitor) VisitBlockStatement(ctx *BlockStatementContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseCalcVisitor) VisitAssigment(ctx *AssigmentContext) interface{} {
 	return v.VisitChildren(ctx)
 }

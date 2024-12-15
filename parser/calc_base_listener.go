@@ -33,6 +33,24 @@ func (s *BaseCalcListener) EnterStatement(ctx *StatementContext) {}
 // ExitStatement is called when production statement is exited.
 func (s *BaseCalcListener) ExitStatement(ctx *StatementContext) {}
 
+// EnterIfStatement is called when production ifStatement is entered.
+func (s *BaseCalcListener) EnterIfStatement(ctx *IfStatementContext) {}
+
+// ExitIfStatement is called when production ifStatement is exited.
+func (s *BaseCalcListener) ExitIfStatement(ctx *IfStatementContext) {}
+
+// EnterBasicExp is called when production BasicExp is entered.
+func (s *BaseCalcListener) EnterBasicExp(ctx *BasicExpContext) {}
+
+// ExitBasicExp is called when production BasicExp is exited.
+func (s *BaseCalcListener) ExitBasicExp(ctx *BasicExpContext) {}
+
+// EnterBlockStatement is called when production blockStatement is entered.
+func (s *BaseCalcListener) EnterBlockStatement(ctx *BlockStatementContext) {}
+
+// ExitBlockStatement is called when production blockStatement is exited.
+func (s *BaseCalcListener) ExitBlockStatement(ctx *BlockStatementContext) {}
+
 // EnterAssigment is called when production assigment is entered.
 func (s *BaseCalcListener) EnterAssigment(ctx *AssigmentContext) {}
 

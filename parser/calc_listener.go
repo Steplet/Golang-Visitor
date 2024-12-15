@@ -14,6 +14,15 @@ type CalcListener interface {
 	// EnterStatement is called when entering the statement production.
 	EnterStatement(c *StatementContext)
 
+	// EnterIfStatement is called when entering the ifStatement production.
+	EnterIfStatement(c *IfStatementContext)
+
+	// EnterBasicExp is called when entering the BasicExp production.
+	EnterBasicExp(c *BasicExpContext)
+
+	// EnterBlockStatement is called when entering the blockStatement production.
+	EnterBlockStatement(c *BlockStatementContext)
+
 	// EnterAssigment is called when entering the assigment production.
 	EnterAssigment(c *AssigmentContext)
 
@@ -34,6 +43,15 @@ type CalcListener interface {
 
 	// ExitStatement is called when exiting the statement production.
 	ExitStatement(c *StatementContext)
+
+	// ExitIfStatement is called when exiting the ifStatement production.
+	ExitIfStatement(c *IfStatementContext)
+
+	// ExitBasicExp is called when exiting the BasicExp production.
+	ExitBasicExp(c *BasicExpContext)
+
+	// ExitBlockStatement is called when exiting the blockStatement production.
+	ExitBlockStatement(c *BlockStatementContext)
 
 	// ExitAssigment is called when exiting the assigment production.
 	ExitAssigment(c *AssigmentContext)

@@ -2,11 +2,20 @@
 grammar Calc;
 
 // Rules
-program : statement+ EOF;
+program : (statement)* EOF;
 
-statement: expression NEWLINE?
-         | assigment NEWLINE? 
+statement: assigment NEWLINE? 
+         | ifStatement NEWLINE?
+         | blockStatement NEWLINE?
          ;
+
+ifStatement : 'if' '(' ifExpression ')' blockStatement ;
+
+ifExpression 
+      : expression op=('=='|'<'|'>'|'>='|'<='|'!=') expression #BasicExp
+      ; 
+
+blockStatement : '{' (statement)* '}' ;
 
 assigment : ID '=' expression;
 
@@ -22,6 +31,12 @@ MUL: '*';
 DIV: '/';
 ADD: '+';
 SUB: '-';
+EQUAL: '==';
+GREATHER: '>';
+GREATHER_OR_EQUAL: '>=';
+LESS: '<';
+LESS_OR_EQUAL: '<=';
+NOT_EQUAL: '!=';
 NUMBER: [0-9]+;
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
 NEWLINE: '\r'? '\n';

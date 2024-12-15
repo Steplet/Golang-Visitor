@@ -7,6 +7,13 @@ import (
 	"strings"
 )
 
+// Rework repeated assigment
+//TODO logical op and var; If else; while; comments; println;
+
+var addresCounter int = 0
+var IfStatementCounter int = 0
+var localBuilder strings.Builder
+
 type CalcVisitor struct {
 	*parser.BaseCalcVisitor
 	Variables     map[string]string
@@ -14,16 +21,19 @@ type CalcVisitor struct {
 }
 
 func NewCalcVisitor() *CalcVisitor {
-	return &CalcVisitor{Variables: make(map[string]string)}
+	return &CalcVisitor{Variables: make(map[string]string)} //id = valueId => a = res0 || a = 2x3
 }
 
 func (v *CalcVisitor) VisitProgram(ctx *parser.ProgramContext) interface{} {
 
+	fmt.Printf("Child counter = %d\n", ctx.GetChildCount())
 	for i := 0; i < ctx.GetChildCount(); i++ {
 		if state := ctx.Statement(i); state != nil {
 			state.Accept(v)
 		}
 	}
+
+	// fmt.Printf("adrre counter = %d\n", addresCounter)
 
 	v.StringBuilder.WriteString("ebreak")
 
@@ -36,47 +46,126 @@ func (v *CalcVisitor) VisitStatement(ctx *parser.StatementContext) any {
 		return ctx.Assigment().Accept(v)
 	}
 
-	fmt.Println("Expression Statment 0 in")
+	if ctx.IfStatement() != nil {
+		return ctx.IfStatement().Accept(v)
+	}
 
-	ctx.Expression().Accept(v)
-	fmt.Println("Expression Statment 0 out")
+	// ctx.Expression().Accept(v)
+
+	return 0
+}
+func (v *CalcVisitor) VisitIfStatement(ctx *parser.IfStatementContext) any {
+	// var localBuilder strings.Builder
+
+	v.StringBuilder.WriteString(localBuilder.String())
+	localBuilder.Reset()
+
+	beqStringWithOutOffset := ctx.IfExpression().Accept(v).(string)
+	ifAdderStart := addresCounter
+	v.StringBuilder.WriteString(beqStringWithOutOffset)
+
+	ctx.BlockStatement().Accept(v)
+
+	offset := fmt.Sprintf("%d\n", addresCounter-ifAdderStart)
+	v.StringBuilder.WriteString(offset)
+
+	v.StringBuilder.WriteString(localBuilder.String())
+	localBuilder.Reset()
+
+	return 0
+}
+
+func (v *CalcVisitor) VisitBasicExp(ctx *parser.BasicExpContext) any {
+
+	l := ctx.Expression(0).Accept(v)
+	left := fmt.Sprintf("%v", l)
+
+	r := ctx.Expression(1).Accept(v)
+	right := fmt.Sprintf("%v", r)
+
+	addresCounter++
+
+	fmt.Printf("adrre counter = %d\n", addresCounter)
+	if ctx.GetOp().GetTokenType() == parser.CalcLexerEQUAL {
+
+		riscString := util.IfBasicExpression(left, right)
+
+		v.StringBuilder.WriteString(localBuilder.String())
+
+		localBuilder.Reset()
+
+		return riscString
+	}
+
+	return ""
+}
+
+func (v *CalcVisitor) VisitBlockStatement(ctx *parser.BlockStatementContext) any {
+
+	for i := 0; i < ctx.GetChildCount(); i++ {
+		if state := ctx.Statement(i); state != nil {
+			state.Accept(v)
+		}
+	}
 
 	return 0
 }
 
 func (v *CalcVisitor) VisitAssigment(ctx *parser.AssigmentContext) any {
+	addresCounter++
 
 	id := ctx.ID().GetText()
-	value := ctx.Expression().Accept(v).(string)
-	v.Variables[id] = value
+	// if val, ok := v.Variables[id]; ok {
+	// 	valueId := ctx.Expression().Accept(v).(string)
+	// 	resultId := util.MakeVarForResRisc()
 
-	fmt.Printf("write to mem with id = %v and val = %v \n", id, value)
+	// }
+	valueId := ctx.Expression().Accept(v).(string)
+	v.Variables[id] = valueId
 
-	riscString := util.AssigmentRiscFuncInit(id, value)
+	riscString := util.AssigmentRiscFuncInit(id, valueId)
 
-	v.StringBuilder.WriteString(riscString)
+	localBuilder.WriteString(riscString)
+	fmt.Printf("valueid = %s\n", valueId)
 
-	return value
+	return valueId
 
 }
 
 func (v *CalcVisitor) VisitMulDiv(ctx *parser.MulDivContext) interface{} {
-	left := ctx.Expression(0).Accept(v).(float64)
-	right := ctx.Expression(1).Accept(v).(float64)
+	addresCounter++
+
+	left := ""
+	right := ""
+
+	l := ctx.Expression(0).Accept(v)
+	left = fmt.Sprintf("%v", l)
+
+	r := ctx.Expression(1).Accept(v)
+	right = fmt.Sprintf("%v", r)
 
 	switch ctx.GetOp().GetTokenType() {
 
 	case parser.CalcLexerMUL:
 		fmt.Printf("Mul with l = %v and r = %v\n", left, right)
-		return left * right
+
+		resId := util.MakeVarForResRisc()
+
+		riscString := util.MultiRiscFunc(resId, left, right)
+		localBuilder.WriteString(riscString)
+
+		return resId
 
 	case parser.CalcLexerDIV:
-		if right == 0 {
-			panic("division by zero!")
-		}
+
 		fmt.Printf("Div with l = %v and r = %v\n", left, right)
 
-		return left / right
+		resId := util.MakeVarForResRisc()
+
+		riscString := util.DivRiscFunc(resId, left, right)
+		localBuilder.WriteString(riscString)
+
+		return resId
 	}
 
 	return 0
@@ -84,6 +173,8 @@ func (v *CalcVisitor) VisitMulDiv(ctx *parser.MulDivContext) interface{} {
 }
 
 func (v *CalcVisitor) VisitAddSub(ctx *parser.AddSubContext) any {
+	addresCounter++
+
 	left := ""
 	right := ""
 
@@ -100,7 +191,7 @@ func (v *CalcVisitor) VisitAddSub(ctx *parser.AddSubContext) any {
 		resId := util.MakeVarForResRisc()
 
 		riscString := util.AddIdRiscFunc(resId, left, right)
-		v.StringBuilder.WriteString(riscString)
+		localBuilder.WriteString(riscString)
 
 		return resId
 
@@ -109,7 +200,7 @@ func (v *CalcVisitor) VisitAddSub(ctx *parser.AddSubContext) any {
 		resId := util.MakeVarForResRisc()
 
 		riscString := util.SubIdRicsFunc(resId, left, right)
-		v.StringBuilder.WriteString(riscString)
+		localBuilder.WriteString(riscString)
 
 		return resId
 	}
@@ -119,16 +210,15 @@ func (v *CalcVisitor) VisitAddSub(ctx *parser.AddSubContext) any {
 }
 
 func (v *CalcVisitor) VisitNumber(ctx *parser.NumberContext) any {
-
+	addresCounter++
 	id := util.MakeNumberVar(ctx.GetText())
 	riscString := util.AssigmentRiscFunc(id, ctx.GetText())
-	v.StringBuilder.WriteString(riscString)
+	localBuilder.WriteString(riscString)
 
 	return id
 }
 
 func (v *CalcVisitor) VisitID(ctx *parser.IDContext) any {
-	fmt.Println("IdFunc")
 	id := ctx.GetText()
 
 	if _, exists := v.Variables[id]; exists {
