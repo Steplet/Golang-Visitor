@@ -79,10 +79,10 @@ func (v *CalcVisitor) VisitWhileStatement(ctx *parser.WhileStatementContext) any
 
 	jumpStringWithOutOffset := ctx.IfExpression().Accept(v).(string)
 	whileAdderStart := addresCounter
-
-	v.StringBuilder.WriteString(jumpStringWithOutOffset)
+	// fmt.Printf("jump = %s\n", jumpStringWithOutOffset)
 
 	ctx.BlockStatement().Accept(v)
+	v.StringBuilder.WriteString(jumpStringWithOutOffset)
 
 	offset := fmt.Sprintf("%d\n", addresCounter-whileAdderStart+1)
 	v.StringBuilder.WriteString(offset)
