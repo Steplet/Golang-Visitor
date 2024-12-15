@@ -85,10 +85,38 @@ func (v *CalcVisitor) VisitBasicExp(ctx *parser.BasicExpContext) any {
 
 	addresCounter++
 
-	fmt.Printf("adrre counter = %d\n", addresCounter)
+	// fmt.Printf("adrre counter = %d\n", addresCounter)
 	if ctx.GetOp().GetTokenType() == parser.CalcLexerEQUAL {
 
-		riscString := util.IfBasicExpression(left, right)
+		riscString := util.IfBasicExpressionEqual(left, right)
+
+		v.StringBuilder.WriteString(localBuilder.String())
+
+		localBuilder.Reset()
+
+		return riscString
+	}
+
+	if ctx.GetOp().GetTokenType() == parser.CalcLexerGREATHER {
+		riscString := util.IfBasicExpressionGreather(left, right)
+
+		v.StringBuilder.WriteString(localBuilder.String())
+
+		localBuilder.Reset()
+
+		return riscString
+	}
+	if ctx.GetOp().GetTokenType() == parser.CalcLexerLESS {
+		riscString := util.IfBasicExpressionLess(left, right)
+
+		v.StringBuilder.WriteString(localBuilder.String())
+
+		localBuilder.Reset()
+
+		return riscString
+	}
+	if ctx.GetOp().GetTokenType() == parser.CalcLexerNOT_EQUAL {
+		riscString := util.IfBasicExpressionNotEqual(left, right)
 
 		v.StringBuilder.WriteString(localBuilder.String())
 

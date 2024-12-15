@@ -12,7 +12,7 @@ statement: assigment NEWLINE?
 ifStatement : 'if' '(' ifExpression ')' blockStatement ;
 
 ifExpression 
-      : expression op=('=='|'<'|'>'|'>='|'<='|'!=') expression #BasicExp
+      : expression op=('=='|'<'|'>'|'!=') expression #BasicExp
       ; 
 
 blockStatement : '{' (statement)* '}' ;

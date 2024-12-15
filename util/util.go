@@ -49,12 +49,38 @@ func AssigmentRiscFunc(id string, number string) string {
 	return res
 }
 
-func IfBasicExpression(leftId, rightId string) string {
+func IfBasicExpressionEqual(leftId, rightId string) string {
 	varNameLeft := MakeRISCVar(leftId)
 	varNameRight := MakeRISCVar(rightId)
 
 	res := fmt.Sprintf("bne %s, %s, ", varNameLeft, varNameRight)
 	return res
+}
+
+func IfBasicExpressionGreather(leftId, rightId string) string {
+	varNameLeft := MakeRISCVar(leftId)
+	varNameRight := MakeRISCVar(rightId)
+
+	res := fmt.Sprintf("blt %s, %s, ", varNameLeft, varNameRight)
+	return res
+
+}
+
+func IfBasicExpressionLess(leftId, rightId string) string {
+	varNameLeft := MakeRISCVar(leftId)
+	varNameRight := MakeRISCVar(rightId)
+
+	res := fmt.Sprintf("bge %s, %s, ", varNameLeft, varNameRight)
+	return res
+
+}
+func IfBasicExpressionNotEqual(leftId, rightId string) string {
+	varNameLeft := MakeRISCVar(leftId)
+	varNameRight := MakeRISCVar(rightId)
+
+	res := fmt.Sprintf("beq %s, %s, ", varNameLeft, varNameRight)
+	return res
+
 }
 
 func AssigmentRiscFuncInit(id, numberId string) string {
